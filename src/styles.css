@@ -129,6 +129,25 @@
   }
 }
 
+@utility input-base {
+  width: 100%;
+  min-height: 52px;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  background: var(--color-card);
+  padding: 0 1rem;
+  font-size: 15px;
+  color: var(--color-foreground);
+  outline: none;
+  &::placeholder {
+    color: var(--color-muted-foreground);
+  }
+  &:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px oklch(0.72 0.14 168 / 0.18);
+  }
+}
+
 @utility card-soft {
   background: var(--color-card);
   border: 1px solid var(--color-border);
