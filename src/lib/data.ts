@@ -285,7 +285,7 @@ export type TaskInput = {
 export function useSaveTask() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (input: TaskInput & { id?: string }) => {
+    mutationFn: async (input: TaskInput & { id?: string | undefined }) => {
       const { id, ...values } = input;
       if (id) {
         const { error } = await supabase.from("tasks").update(values).eq("id", id);
