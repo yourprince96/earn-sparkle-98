@@ -1,185 +1,104 @@
-import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-
-import { supabase } from "@/integrations/supabase/client";
+import { createFileRoute } from "@tanstack/react-router"
+import { useState } from "react"
 
 export const Route = createFileRoute("/")({
-  ssr: false,
-  head: () => ({
-    meta: [
-      { title: "TakaTask — Earn money by doing small tasks" },
-      {
-        name: "description",
-        content:
-          "Sign in to TakaTask and earn Taka by watching ads, visiting websites and spinning daily. Withdraw to bKash or Nagad from 100 Taka.",
-      },
-      { property: "og:title", content: "TakaTask — Earn money by doing small tasks" },
-      {
-        property: "og:description",
-        content: "Watch, visit, spin and earn. Withdraw to bKash or Nagad from 100 Taka.",
-      },
-    ],
-  }),
-  component: AuthPage,
-});
+  component: RolexHome,
+})
 
-function AuthPage() {
-  const navigate = useNavigate();
-  const router = useRouter();
-  const [mode, setMode] = useState<"login" | "signup">("login");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [referral, setReferral] = useState("");
-  const [busy, setBusy] = useState(false);
-
-  useEffect(() => {
-    void supabase.auth.getSession().then(({ data }) => {
-      if (data.session) void navigate({ to: "/home", replace: true });
-    });
-  }, [navigate]);
-
-  async function submit(event: React.FormEvent) {
-    event.preventDefault();
-    if (busy) return;
-    setBusy(true);
-    try {
-      if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
-          email: email.trim(),
-          password,
-          options: {
-            emailRedirectTo: window.location.origin,
-            data: { full_name: name.trim(), referral_code: referral.trim().toUpperCase() },
-          },
-        });
-        if (error) throw error;
-        toast.success("Account created — welcome!");
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email: email.trim(),
-          password,
-        });
-        if (error) throw error;
-      }
-      const { data } = await supabase.auth.getSession();
-      if (data.session) {
-        await router.invalidate();
-        void navigate({ to: "/home", replace: true });
-      } else {
-        toast.info("Check your email to confirm your account, then sign in.");
-      }
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Something went wrong");
-    } finally {
-      setBusy(false);
-    }
-  }
+function RolexHome() {
+  const [balance] = useState(0.5)
 
   return (
-    <main className="min-h-screen w-full">
-      <div className="mx-auto flex min-h-screen max-w-[430px] flex-col">
-        <section className="hero-gradient rounded-b-[38px] px-6 pt-12 pb-10 text-white">
-          <div className="flex size-14 items-center justify-center rounded-2xl bg-white/15 font-display text-2xl font-bold ring-1 ring-white/25">
-            ৳
+    <div className="min-h-screen bg-[#f2f4f7] pb-24 font-sans">
+      {/* Header - Rolex Style */}
+      <div className="bg-gradient-to-r from-[#00b25e] to-[#0a8a4b] text-white px-4 pt-3 pb-6 rounded-b-[28px] shadow-lg">
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-[#00b25e] font-bold">R</div>
+            <span className="font-bold text-lg tracking-wide">ROLEX 2.0</span>
           </div>
-          <h1 className="mt-5 font-display text-3xl leading-tight font-bold">
-            Earn Taka
-            <br />
-            every single day
-          </h1>
-          <p className="mt-2 max-w-[18rem] text-sm text-white/70">
-            Watch ads, visit websites and spin daily. Cash out to bKash or Nagad from ৳100.
-          </p>
-        </section>
+          <div className="flex gap-3 text-xl">
+            <span>💬</span>
+            <span>🔔</span>
+            <span>🌐</span>
+          </div>
+        </div>
 
-        <div className="flex-1 px-5 pt-6 pb-10">
-          <div className="grid grid-cols-2 gap-1 rounded-2xl bg-secondary p-1">
-            {(["login", "signup"] as const).map((value) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => setMode(value)}
-                className={`tap min-h-[46px] rounded-xl text-sm font-bold ${
-                  mode === value ? "bg-card text-ink shadow-card" : "text-ink-soft"
-                }`}
-              >
-                {value === "login" ? "Sign in" : "Sign up"}
-              </button>
-            ))}
+        <div className="bg-white/10 backdrop-blur rounded-2xl p-4">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-sm opacity-80">Referral Income</p>
+              <p className="text-2xl font-bold">৳ {balance}</p>
+              <p className="text-xs mt-1 opacity-80">📋 Account ID: 717322</p>
+              <p className="text-xs opacity-70">UID: 717322</p>
+            </div>
+            <div className="w-20 h-20 bg-white rounded-full p-1">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=717322" alt="qr" className="w-full h-full rounded-full" />
+            </div>
           </div>
 
-          <form onSubmit={submit} className="mt-5 space-y-3">
-            {mode === "signup" && (
-              <Field label="Full name">
-                <input
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  placeholder="Your name"
-                  className="input-base"
-                />
-              </Field>
-            )}
-            <Field label="Email">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                inputMode="email"
-                autoComplete="email"
-                placeholder="you@email.com"
-                className="input-base"
-              />
-            </Field>
-            <Field label="Password">
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-                autoComplete={mode === "login" ? "current-password" : "new-password"}
-                placeholder="At least 6 characters"
-                className="input-base"
-              />
-            </Field>
-            {mode === "signup" && (
-              <Field label="Referral code (optional)">
-                <input
-                  value={referral}
-                  onChange={(e) => setReferral(e.target.value.toUpperCase())}
-                  placeholder="e.g. 9F2A81C4"
-                  className="input-base tracking-[0.18em]"
-                />
-              </Field>
-            )}
-
-            <button
-              type="submit"
-              disabled={busy}
-              className="tap mt-2 min-h-[54px] w-full rounded-2xl bg-primary font-display text-[17px] font-bold text-primary-foreground disabled:opacity-60"
-            >
-              {busy ? "Please wait…" : mode === "login" ? "Sign in" : "Create account"}
+          <div className="grid grid-cols-2 gap-3 mt-5">
+            <button className="bg-white text-[#00b25e] font-bold py-3 rounded-full flex items-center justify-center gap-2">
+              ➕ ADD FUND
             </button>
-          </form>
+            <button className="bg-[#0a6b38] border border-white/30 text-white font-bold py-3 rounded-full flex items-center justify-center gap-2">
+              💸 CASH OUT
+            </button>
+          </div>
 
-          <p className="mt-5 text-center text-xs text-ink-soft">
-            Admin? Sign in with your admin email to open the admin panel.
-          </p>
+          <div className="grid grid-cols-2 gap-3 mt-3">
+            <div className="bg-white/20 rounded-xl p-3 text-center">
+              <p className="text-xs opacity-80">Approved</p>
+              <p className="font-bold">৳ 0</p>
+            </div>
+            <div className="bg-white/20 rounded-xl p-3 text-center">
+              <p className="text-xs opacity-80">Pending</p>
+              <p className="font-bold">৳ 0</p>
+            </div>
+          </div>
         </div>
       </div>
-    </main>
-  );
+
+      {/* Menu Grid - Rolex Style */}
+      <div className="px-4 -mt-3">
+        <div className="bg-white rounded-[20px] shadow-sm p-4 grid grid-cols-4 gap-4">
+          <MenuItem icon="🛍️" label="Order" />
+          <MenuItem icon="👥" label="My Team" />
+          <MenuItem icon="📋" label="All History" />
+          <MenuItem icon="📢" label="Notice" />
+          <MenuItem icon="💰" label="Referral" />
+          <MenuItem icon="🏆" label="Leaderboard" />
+          <MenuItem icon="✉️" label="Inbox" />
+          <MenuItem icon="👤" label="Profile" />
+        </div>
+      </div>
+
+      <div className="px-4 mt-4">
+        <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-4 text-white flex justify-between items-center">
+          <div>
+            <p className="font-bold">Daily Check-In Bonus</p>
+            <p className="text-sm opacity-90">Get ৳ 10 Daily</p>
+          </div>
+          <button className="bg-white text-green-600 px-4 py-2 rounded-full font-bold text-sm">Claim</button>
+        </div>
+      </div>
+
+      {/* Bottom Nav */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-3 rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+        <div className="text-center text-[#00b25e]"><div className="text-xl">🏠</div><p className="text-[10px] font-bold">HOME</p></div>
+        <div className="text-center text-gray-400"><div className="text-xl">🎁</div><p className="text-[10px]">REWARDS</p></div>
+        <div className="text-center text-gray-400"><div className="text-xl">💼</div><p className="text-[10px]">TASKS</p></div>
+        <div className="text-center text-gray-400"><div className="text-xl">👤</div><p className="text-[10px]">ME</p></div>
+      </div>
+    </div>
+  )
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function MenuItem({ icon, label }: { icon: string, label: string }) {
   return (
-    <label className="block">
-      <span className="mb-1.5 block text-xs font-semibold text-ink-soft">{label}</span>
-      {children}
-    </label>
-  );
+    <div className="flex flex-col items-center gap-1">
+      <div className="w-12 h-12 bg-[#f0faf4] rounded-2xl flex items-center justify-center text-xl">{icon}</div>
+      <p className="text-[11px] font-medium text-gray-700">{label}</p>
+    </div>
+  )
 }
