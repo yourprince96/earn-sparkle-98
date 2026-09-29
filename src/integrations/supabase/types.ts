@@ -14,16 +14,202 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          balance: number
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          is_blocked: boolean
+          referral_code: string
+          referral_earning: number
+          referred_by: string | null
+          total_withdrawn: number
+        }
+        Insert: {
+          balance?: number
+          created_at?: string
+          email: string
+          full_name?: string
+          id: string
+          is_blocked?: boolean
+          referral_code: string
+          referral_earning?: number
+          referred_by?: string | null
+          total_withdrawn?: number
+        }
+        Update: {
+          balance?: number
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          is_blocked?: boolean
+          referral_code?: string
+          referral_earning?: number
+          referred_by?: string | null
+          total_withdrawn?: number
+        }
+        Relationships: []
+      }
+      task_completions: {
+        Row: {
+          created_at: string
+          id: string
+          reward: number
+          task_id: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          reward?: number
+          task_id?: string | null
+          title?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          reward?: number
+          task_id?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_completions_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tasks: {
+        Row: {
+          created_at: string
+          daily_limit: number
+          description: string
+          duration_seconds: number
+          id: string
+          is_active: boolean
+          kind: string
+          link: string | null
+          reward: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          daily_limit?: number
+          description?: string
+          duration_seconds?: number
+          id?: string
+          is_active?: boolean
+          kind?: string
+          link?: string | null
+          reward?: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          daily_limit?: number
+          description?: string
+          duration_seconds?: number
+          id?: string
+          is_active?: boolean
+          kind?: string
+          link?: string | null
+          reward?: number
+          title?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      withdrawals: {
+        Row: {
+          account_number: string
+          amount: number
+          created_at: string
+          id: string
+          method: string
+          note: string | null
+          processed_at: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          account_number: string
+          amount: number
+          created_at?: string
+          id?: string
+          method: string
+          note?: string | null
+          processed_at?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          account_number?: string
+          amount?: number
+          created_at?: string
+          id?: string
+          method?: string
+          note?: string | null
+          processed_at?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      admin_stats: { Args: never; Returns: Json }
+      claim_task: { Args: { _task_id: string }; Returns: number }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      request_withdrawal: {
+        Args: { _account: string; _amount: number; _method: string }
+        Returns: string
+      }
+      review_withdrawal: {
+        Args: { _approve: boolean; _id: string; _note?: string }
+        Returns: undefined
+      }
+      today_earning: { Args: never; Returns: number }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +336,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
