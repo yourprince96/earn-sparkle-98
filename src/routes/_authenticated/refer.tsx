@@ -35,13 +35,14 @@ function ReferPage() {
 
   async function share() {
     const text = `Earn Taka with TakaTask! Use my referral code ${code} when you sign up.`;
+    const nav: Navigator = navigator;
     try {
-      if (typeof navigator !== "undefined" && "share" in navigator) {
-        await navigator.share({ title: "TakaTask", text });
-      } else {
-        await navigator.clipboard.writeText(text);
-        toast.success("Invite message copied!");
+      if (typeof nav.share === "function") {
+        await nav.share({ title: "TakaTask", text });
+        return;
       }
+      await nav.clipboard.writeText(text);
+      toast.success("Invite message copied!");
     } catch {
       /* user cancelled */
     }
