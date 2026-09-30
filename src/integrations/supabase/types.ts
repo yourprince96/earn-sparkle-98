@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      fraud_reviews: {
+        Row: {
+          activity_input: string
+          created_at: string
+          created_by: string | null
+          id: string
+          patterns: Json
+          recommended_action: string
+          reviewed_label: string
+          reviewed_user_id: string | null
+          risk_level: string
+          risk_score: number
+          source: string
+          summary: string
+          updated_at: string
+        }
+        Insert: {
+          activity_input?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          patterns?: Json
+          recommended_action?: string
+          reviewed_label?: string
+          reviewed_user_id?: string | null
+          risk_level?: string
+          risk_score?: number
+          source?: string
+          summary?: string
+          updated_at?: string
+        }
+        Update: {
+          activity_input?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          patterns?: Json
+          recommended_action?: string
+          reviewed_label?: string
+          reviewed_user_id?: string | null
+          risk_level?: string
+          risk_score?: number
+          source?: string
+          summary?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           balance: number

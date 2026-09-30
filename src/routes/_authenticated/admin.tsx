@@ -8,14 +8,18 @@ import {
   useAllUsers,
   useAllWithdrawals,
   useDeleteTask,
+  useFraudReviews,
   useIsAdmin,
   useReviewWithdrawal,
+  useRunFraudReview,
   useSaveTask,
   useTasks,
   useToggleBlock,
+  type FraudPattern,
   type Task,
 } from "@/lib/data";
 import { shortDate, taka } from "@/lib/format";
+
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -29,8 +33,9 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
 });
 
-const TABS = ["Dashboard", "Tasks", "Withdraws", "Users"] as const;
+const TABS = ["Dashboard", "Tasks", "Withdraws", "Users", "AI Review"] as const;
 type Tab = (typeof TABS)[number];
+
 
 function AdminPage() {
   const isAdmin = useIsAdmin();
@@ -106,6 +111,8 @@ function AdminPage() {
         {tab === "Tasks" && <TasksTab />}
         {tab === "Withdraws" && <WithdrawsTab />}
         {tab === "Users" && <UsersTab />}
+        {tab === "AI Review" && <FraudTab />}
+
       </div>
     </AppShell>
   );
@@ -491,3 +498,227 @@ function Labeled({ label, children }: { label: string; children: React.ReactNode
     </label>
   );
 }
+
+const RISK_TONE: Record<string, string> = {
+  high: "bg-destructive/10 text-destructive",
+  suspicious: "bg-amber/25 text-amber-deep",
+  normal: "bg-mint/15 text-mint-deep",
+};
+
+const SEVERITY_TONE: Record<string, string> = {
+  high: "bg-destructive/10 text-destructive",
+  medium: "bg-amber/25 text-amber-deep",
+  low: "bg-violet/15 text-violet",
+};
+
+function FraudTab() {
+  const users = useAllUsers();
+  const reviews = useFraudReviews();
+  const run = useRunFraudReview();
+  const toggle = useToggleBlock();
+  const [mode, setMode] = useState<"user" | "paste">("user");
+  const [userId, setUserId] = useState("");
+  const [activity, setActivity] = useState("");
+  const [label, setLabel] = useState("");
+  const [open, setOpen] = useState<string | null>(null);
+
+  const selected = users.data?.find((user) => user.id === userId);
+
+  async function submit(event: React.FormEvent) {
+    event.preventDefault();
+    try {
+      const result = await run.mutateAsync(
+        mode === "user"
+          ? { userId, activity: activity.trim() || null }
+          : { activity: activity.trim(), label: label.trim() || null },
+      );
+      setOpen(result.id);
+      toast.success(`Review done — risk ${result.risk_level}`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not run the review");
+    }
+  }
+
+  async function block(id: string) {
+    try {
+      await toggle.mutateAsync({ id, blocked: true });
+      toast.success("User blocked");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not block user");
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <form onSubmit={submit} className="card-soft space-y-3 p-5">
+        <div>
+          <h2 className="font-display text-lg font-bold">AI earning check</h2>
+          <p className="mt-1 text-xs text-ink-soft">
+            Pick a user or paste task and withdraw activity. AI looks for suspicious earning patterns.
+          </p>
+        </div>
+
+        <div className="flex gap-2">
+          {(["user", "paste"] as const).map((item) => (
+            <button
+              key={item}
+              type="button"
+              onClick={() => setMode(item)}
+              className={`tap min-h-[46px] flex-1 rounded-xl text-sm font-bold ${
+                mode === item ? "bg-ink text-white" : "border border-border bg-card text-ink-soft"
+              }`}
+            >
+              {item === "user" ? "A user" : "Paste activity"}
+            </button>
+          ))}
+        </div>
+
+        {mode === "user" ? (
+          <>
+            <Labeled label="User">
+              <select
+                value={userId}
+                onChange={(e) => setUserId(e.target.value)}
+                required
+                className="input-base"
+              >
+                <option value="">Select a user…</option>
+                {users.data?.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {(user.full_name || user.email).slice(0, 34)} · {taka(user.balance)}
+                  </option>
+                ))}
+              </select>
+            </Labeled>
+            {selected && (
+              <p className="text-xs text-ink-soft">
+                Withdrawn {taka(selected.total_withdrawn)} · referral {taka(selected.referral_earning)}
+                {selected.is_blocked ? " · blocked" : ""}
+              </p>
+            )}
+            <Labeled label="Extra notes for the AI (optional)">
+              <textarea
+                value={activity}
+                onChange={(e) => setActivity(e.target.value)}
+                rows={3}
+                placeholder="Anything you noticed about this account…"
+                className="input-base"
+              />
+            </Labeled>
+          </>
+        ) : (
+          <>
+            <Labeled label="Label">
+              <input
+                value={label}
+                onChange={(e) => setLabel(e.target.value)}
+                placeholder="e.g. Suspected group of 5 accounts"
+                className="input-base"
+              />
+            </Labeled>
+            <Labeled label="Task and withdraw activity">
+              <textarea
+                value={activity}
+                onChange={(e) => setActivity(e.target.value)}
+                rows={7}
+                required
+                placeholder={"time | task | reward\n2026-09-30 10:00:01 | Watch Ad | 5\n…"}
+                className="input-base"
+              />
+            </Labeled>
+          </>
+        )}
+
+        <button
+          type="submit"
+          disabled={run.isPending}
+          className="tap min-h-[54px] w-full rounded-2xl bg-primary font-display text-[15px] font-bold text-primary-foreground disabled:opacity-60"
+        >
+          {run.isPending ? "AI is checking…" : "Run AI review"}
+        </button>
+      </form>
+
+      <div className="space-y-2">
+        <h3 className="font-display text-base font-bold">Recent reviews</h3>
+        {reviews.data?.length === 0 && (
+          <p className="card-soft p-4 text-sm text-ink-soft">No reviews yet.</p>
+        )}
+        {reviews.data?.map((review) => {
+          const expanded = open === review.id;
+          const patterns: FraudPattern[] = Array.isArray(review.patterns) ? review.patterns : [];
+          return (
+            <div key={review.id} className="card-soft p-4">
+              <button
+                type="button"
+                onClick={() => setOpen(expanded ? null : review.id)}
+                className="tap flex w-full items-center gap-3 text-left"
+              >
+                <span
+                  className={`grid size-12 shrink-0 place-items-center rounded-2xl font-display text-sm font-bold ${
+                    RISK_TONE[review.risk_level] ?? RISK_TONE["normal"]
+                  }`}
+                >
+                  {review.risk_score}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate font-display text-[15px] font-bold">
+                    {review.reviewed_label}
+                  </span>
+                  <span className="block text-xs text-ink-soft capitalize">
+                    {review.risk_level} risk · {shortDate(review.created_at)}
+                  </span>
+                </span>
+                <span className="text-ink-soft">{expanded ? "▴" : "▾"}</span>
+              </button>
+
+              {expanded && (
+                <div className="mt-3 space-y-3 border-t border-border pt-3">
+                  <p className="text-sm text-ink-soft">{review.summary}</p>
+
+                  {patterns.length > 0 ? (
+                    <div className="space-y-2">
+                      {patterns.map((pattern, index) => (
+                        <div key={index} className="rounded-xl bg-muted p-3">
+                          <div className="flex items-start gap-2">
+                            <span className="min-w-0 flex-1 font-display text-sm font-bold">
+                              {pattern.title}
+                            </span>
+                            <span
+                              className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${
+                                SEVERITY_TONE[pattern.severity] ?? SEVERITY_TONE["low"]
+                              }`}
+                            >
+                              {pattern.severity}
+                            </span>
+                          </div>
+                          <p className="mt-1 text-xs text-ink-soft">{pattern.detail}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-ink-soft">No suspicious pattern found.</p>
+                  )}
+
+                  <p className="rounded-xl bg-violet/10 p-3 text-xs font-semibold text-violet">
+                    Suggested: {review.recommended_action}
+                  </p>
+
+                  {review.reviewed_user_id && (
+                    <button
+                      type="button"
+                      onClick={() => void block(review.reviewed_user_id as string)}
+                      className="tap min-h-[48px] w-full rounded-xl bg-destructive/10 text-sm font-bold text-destructive"
+                    >
+                      Block this user
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
