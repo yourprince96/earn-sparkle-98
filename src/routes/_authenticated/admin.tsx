@@ -8,14 +8,18 @@ import {
   useAllUsers,
   useAllWithdrawals,
   useDeleteTask,
+  useFraudReviews,
   useIsAdmin,
   useReviewWithdrawal,
+  useRunFraudReview,
   useSaveTask,
   useTasks,
   useToggleBlock,
+  type FraudPattern,
   type Task,
 } from "@/lib/data";
 import { shortDate, taka } from "@/lib/format";
+
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -29,8 +33,9 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
 });
 
-const TABS = ["Dashboard", "Tasks", "Withdraws", "Users"] as const;
+const TABS = ["Dashboard", "Tasks", "Withdraws", "Users", "AI Review"] as const;
 type Tab = (typeof TABS)[number];
+
 
 function AdminPage() {
   const isAdmin = useIsAdmin();
@@ -106,6 +111,8 @@ function AdminPage() {
         {tab === "Tasks" && <TasksTab />}
         {tab === "Withdraws" && <WithdrawsTab />}
         {tab === "Users" && <UsersTab />}
+        {tab === "AI Review" && <FraudTab />}
+
       </div>
     </AppShell>
   );
