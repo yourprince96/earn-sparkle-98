@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { supabase } from "@/integrations/supabase/client";
+import { reviewEarningActivity } from "@/lib/fraud.functions";
+
 
 export type Profile = {
   id: string;
@@ -315,3 +317,59 @@ export function useDeleteTask() {
     },
   });
 }
+
+/* ---------------- AI fraud review ---------------- */
+
+export type FraudPattern = { title: string; detail: string; severity: string };
+
+export type FraudReviewRow = {
+  id: string;
+  reviewed_user_id: string | null;
+  reviewed_label: string;
+  source: string;
+  risk_level: string;
+  risk_score: number;
+  summary: string;
+  patterns: FraudPattern[];
+  recommended_action: string;
+  created_at: string;
+};
+
+export function useFraudReviews() {
+  return useQuery({
+    queryKey: ["fraud-reviews"],
+    queryFn: async (): Promise<FraudReviewRow[]> => {
+      const { data, error } = await supabase
+        .from("fraud_reviews")
+        .select(
+          "id,reviewed_user_id,reviewed_label,source,risk_level,risk_score,summary,patterns,recommended_action,created_at",
+        )
+        .order("created_at", { ascending: false })
+        .limit(30);
+      if (error) throw error;
+      return (data ?? []) as unknown as FraudReviewRow[];
+    },
+  });
+}
+
+export function useRunFraudReview() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: {
+      userId?: string | null;
+      activity?: string | null;
+      label?: string | null;
+    }) =>
+      await reviewEarningActivity({
+        data: {
+          userId: input.userId ?? null,
+          activity: input.activity ?? null,
+          label: input.label ?? null,
+        },
+      }),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ["fraud-reviews"] });
+    },
+  });
+}
+
