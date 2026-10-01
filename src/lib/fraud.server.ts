@@ -103,7 +103,7 @@ export async function analyzeEarningActivity(activity: string): Promise<FraudRev
   });
 
   try {
-    const output = (await result.experimental_output) as FraudReview;
+    const output = (await result.output) as FraudReview;
     return normalize(output);
   } catch (error) {
     if (NoObjectGeneratedError.isInstance(error) && error.text) {
