@@ -1,11 +1,16 @@
 import type { ReactNode } from "react";
 
+import { AdSlot } from "./AdSlot";
 import { BottomNav } from "./BottomNav";
 
 export function AppShell({ children, nav = true }: { children: ReactNode; nav?: boolean }) {
   return (
     <main className="min-h-screen w-full">
-      <div className={`mx-auto max-w-[430px] px-4 pt-5 ${nav ? "pb-32" : "pb-10"}`}>{children}</div>
+      <div className={`mx-auto max-w-[430px] px-4 pt-5 ${nav ? "pb-32" : "pb-10"}`}>
+        <AdSlot slot="ad_top" />
+        {children}
+        <AdSlot slot="ad_bottom" />
+      </div>
       {nav && <BottomNav />}
     </main>
   );
