@@ -215,3 +215,18 @@ export default function TaskAndEarnFeatures() {
   );
             }
   
+  import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+// ... বাকি UI কম্পোনেন্ট এবং স্টেট
+
+export const Route = createFileRoute('/')({
+  ssr: false,
+  head: () => ({
+    meta: [
+      { title: 'TaskEarn — টাস্ক করে ইনকাম করুন' },
+      { name: 'description', content: 'সহজ টাস্ক সম্পন্ন করে প্রতিদিন আয় করুন।' },
+    ],
+  }),
+  component: AuthPage,
+});
