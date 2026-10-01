@@ -23,7 +23,7 @@ export function BrandIcon({ icon, category }: { icon: string; category: string }
   const b =
     BRANDS[icon] ??
     (category === "website_visit"
-      ? BRANDS.website
+      ? BRANDS["website"]
       : category === "coin_sale"
         ? { Icon: Coins, cls: "bg-amber/25 text-amber-deep" }
         : { Icon: Star, cls: "bg-mint/15 text-mint-deep" });
