@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_settings: {
+        Row: {
+          ad_bottom: string
+          ad_interstitial: string
+          ad_middle: string
+          ad_top: string
+          bkash_number: string
+          id: number
+          nagad_number: string
+          spin_fee: number
+          spin_prizes: Json
+          support_email: string
+          support_telegram: string
+          support_whatsapp: string
+          updated_at: string
+        }
+        Insert: {
+          ad_bottom?: string
+          ad_interstitial?: string
+          ad_middle?: string
+          ad_top?: string
+          bkash_number?: string
+          id?: number
+          nagad_number?: string
+          spin_fee?: number
+          spin_prizes?: Json
+          support_email?: string
+          support_telegram?: string
+          support_whatsapp?: string
+          updated_at?: string
+        }
+        Update: {
+          ad_bottom?: string
+          ad_interstitial?: string
+          ad_middle?: string
+          ad_top?: string
+          bkash_number?: string
+          id?: number
+          nagad_number?: string
+          spin_fee?: number
+          spin_prizes?: Json
+          support_email?: string
+          support_telegram?: string
+          support_whatsapp?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       fraud_reviews: {
         Row: {
           activity_input: string
@@ -64,6 +112,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
           balance: number
           created_at: string
           email: string
@@ -74,8 +123,11 @@ export type Database = {
           referral_earning: number
           referred_by: string | null
           total_withdrawn: number
+          vip_expires_at: string | null
+          vip_plan_id: string | null
         }
         Insert: {
+          avatar_url?: string | null
           balance?: number
           created_at?: string
           email: string
@@ -86,8 +138,11 @@ export type Database = {
           referral_earning?: number
           referred_by?: string | null
           total_withdrawn?: number
+          vip_expires_at?: string | null
+          vip_plan_id?: string | null
         }
         Update: {
+          avatar_url?: string | null
           balance?: number
           created_at?: string
           email?: string
@@ -98,6 +153,130 @@ export type Database = {
           referral_earning?: number
           referred_by?: string | null
           total_withdrawn?: number
+          vip_expires_at?: string | null
+          vip_plan_id?: string | null
+        }
+        Relationships: []
+      }
+      promo_codes: {
+        Row: {
+          amount: number
+          code: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          max_uses: number
+          used_count: number
+        }
+        Insert: {
+          amount?: number
+          code: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_uses?: number
+          used_count?: number
+        }
+        Update: {
+          amount?: number
+          code?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_uses?: number
+          used_count?: number
+        }
+        Relationships: []
+      }
+      promo_redemptions: {
+        Row: {
+          amount: number
+          code_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          code_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          code_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "promo_redemptions_code_id_fkey"
+            columns: ["code_id"]
+            isOneToOne: false
+            referencedRelation: "promo_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      spins: {
+        Row: {
+          created_at: string
+          fee: number
+          id: string
+          prize: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          fee: number
+          id?: string
+          prize: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          fee?: number
+          id?: string
+          prize?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      support_tickets: {
+        Row: {
+          admin_reply: string | null
+          created_at: string
+          id: string
+          message: string
+          status: string
+          subject: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_reply?: string | null
+          created_at?: string
+          id?: string
+          message: string
+          status?: string
+          subject: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          admin_reply?: string | null
+          created_at?: string
+          id?: string
+          message?: string
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -136,13 +315,101 @@ export type Database = {
           },
         ]
       }
+      task_starts: {
+        Row: {
+          id: string
+          started_at: string
+          task_id: string
+          used: boolean
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          started_at?: string
+          task_id: string
+          used?: boolean
+          user_id: string
+        }
+        Update: {
+          id?: string
+          started_at?: string
+          task_id?: string
+          used?: boolean
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_starts_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_submissions: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          note: string | null
+          processed_at: string | null
+          proof_path: string | null
+          proof_text: string
+          reward: number
+          status: string
+          task_id: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          processed_at?: string | null
+          proof_path?: string | null
+          proof_text?: string
+          reward?: number
+          status?: string
+          task_id?: string | null
+          title?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          processed_at?: string | null
+          proof_path?: string | null
+          proof_text?: string
+          reward?: number
+          status?: string
+          task_id?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_submissions_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tasks: {
         Row: {
+          category: string
           created_at: string
           daily_limit: number
           description: string
           duration_seconds: number
+          icon: string
           id: string
+          instructions: string
           is_active: boolean
           kind: string
           link: string | null
@@ -150,11 +417,14 @@ export type Database = {
           title: string
         }
         Insert: {
+          category?: string
           created_at?: string
           daily_limit?: number
           description?: string
           duration_seconds?: number
+          icon?: string
           id?: string
+          instructions?: string
           is_active?: boolean
           kind?: string
           link?: string | null
@@ -162,11 +432,14 @@ export type Database = {
           title: string
         }
         Update: {
+          category?: string
           created_at?: string
           daily_limit?: number
           description?: string
           duration_seconds?: number
+          icon?: string
           id?: string
+          instructions?: string
           is_active?: boolean
           kind?: string
           link?: string | null
@@ -195,6 +468,89 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      vip_plans: {
+        Row: {
+          created_at: string
+          duration_days: number
+          id: string
+          is_active: boolean
+          name: string
+          perks: string
+          price: number
+        }
+        Insert: {
+          created_at?: string
+          duration_days?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          perks?: string
+          price?: number
+        }
+        Update: {
+          created_at?: string
+          duration_days?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          perks?: string
+          price?: number
+        }
+        Relationships: []
+      }
+      vip_purchases: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          method: string
+          note: string | null
+          plan_id: string | null
+          plan_name: string
+          processed_at: string | null
+          sender_number: string | null
+          status: string
+          trx_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          method: string
+          note?: string | null
+          plan_id?: string | null
+          plan_name?: string
+          processed_at?: string | null
+          sender_number?: string | null
+          status?: string
+          trx_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          method?: string
+          note?: string | null
+          plan_id?: string | null
+          plan_name?: string
+          processed_at?: string | null
+          sender_number?: string | null
+          status?: string
+          trx_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vip_purchases_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "vip_plans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       withdrawals: {
         Row: {
@@ -238,7 +594,16 @@ export type Database = {
     }
     Functions: {
       admin_stats: { Args: never; Returns: Json }
+      buy_vip_wallet: { Args: { _plan_id: string }; Returns: undefined }
       claim_task: { Args: { _task_id: string }; Returns: number }
+      grant_vip: {
+        Args: {
+          _plan: Database["public"]["Tables"]["vip_plans"]["Row"]
+          _uid: string
+        }
+        Returns: undefined
+      }
+      has_active_vip: { Args: { _uid: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -246,13 +611,37 @@ export type Database = {
         }
         Returns: boolean
       }
+      play_spin: { Args: never; Returns: Json }
+      redeem_code: { Args: { _code: string }; Returns: number }
+      request_vip_manual: {
+        Args: {
+          _method: string
+          _plan_id: string
+          _sender: string
+          _trx: string
+        }
+        Returns: undefined
+      }
       request_withdrawal: {
         Args: { _account: string; _amount: number; _method: string }
         Returns: string
       }
+      review_task_submission: {
+        Args: { _approve: boolean; _id: string; _note?: string }
+        Returns: undefined
+      }
+      review_vip_purchase: {
+        Args: { _approve: boolean; _id: string }
+        Returns: undefined
+      }
       review_withdrawal: {
         Args: { _approve: boolean; _id: string; _note?: string }
         Returns: undefined
+      }
+      start_task: { Args: { _task_id: string }; Returns: string }
+      submit_task_proof: {
+        Args: { _proof_path: string; _proof_text: string; _task_id: string }
+        Returns: string
       }
       today_earning: { Args: never; Returns: number }
     }
