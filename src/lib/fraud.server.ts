@@ -1,5 +1,5 @@
 import { createOpenAI } from "@ai-sdk/openai";
-import { Output, streamText, NoObjectGeneratedError } from "ai";
+import { Output, generateText, NoObjectGeneratedError } from "ai";
 import { z } from "zod";
 
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1";
@@ -86,7 +86,7 @@ export async function analyzeEarningActivity(activity: string): Promise<FraudRev
     fetch: runIdFetch.fetch,
   });
 
-  const result = streamText({
+  const result = await generateText({
     model: provider.responses(MODEL),
     system: SYSTEM_PROMPT,
     prompt: `Review this activity and report suspicious earning patterns.\n\n${activity}`,
@@ -103,7 +103,7 @@ export async function analyzeEarningActivity(activity: string): Promise<FraudRev
   });
 
   try {
-    const output = (await result.output) as FraudReview;
+    const output = result.experimental_output as FraudReview;
     return normalize(output);
   } catch (error) {
     if (NoObjectGeneratedError.isInstance(error) && error.text) {
