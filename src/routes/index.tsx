@@ -1,4 +1,5 @@
-Import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createFileRoute } from '@tanstack/react-router';
 
 // ==========================================
 // ১. টাস্ক ও ভিআইপি টাইপস (Task & VIP Types)
@@ -72,7 +73,6 @@ export const TaskAdModal: React.FC<TaskAdModalProps> = ({ isOpen, onAdComplete, 
           টাস্কটি চালু করতে ১০ সেকেন্ডের এই বিজ্ঞাপনটি সম্পূর্ণ দেখুন।
         </p>
 
-        {/* Adsterra Banner Placeholder */}
         <div className="my-4 bg-gray-100 border border-dashed border-gray-400 rounded p-6 flex flex-col items-center justify-center min-h-[150px]">
           <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">[ Adsterra Ad Unit ]</span>
           <p className="text-xs text-gray-400 mt-1">বিজ্ঞাপন চলাকালীন পেজ বন্ধ করবেন না</p>
@@ -160,8 +160,8 @@ export const SpinAndEarn: React.FC<SpinProps> = ({ userBalance, spinFee = 5, onS
 // ==========================================
 // ৪. ডেমো ফিচার মেইন পেজ (Main Combined View)
 // ==========================================
-export default function TaskAndEarnFeatures() {
-  const [userBalance, setUserBalance] = useState(50); // Sample balance BDT
+export function TaskAndEarnFeatures() {
+  const [userBalance, setUserBalance] = useState(50);
   const [isAdOpen, setIsAdOpen] = useState(false);
 
   const handleTaskClick = () => {
@@ -187,7 +187,6 @@ export default function TaskAndEarnFeatures() {
         <div className="text-2xl font-extrabold">৳{userBalance}</div>
       </div>
 
-      {/* টাস্ক খোলার নমুনা বাটান */}
       <div className="bg-white p-4 border rounded-xl shadow-sm text-center">
         <h3 className="font-bold text-gray-800 mb-2">একাউন্ট সেল টাস্ক (জিমেইল / ফেসবুক)</h3>
         <button 
@@ -198,14 +197,12 @@ export default function TaskAndEarnFeatures() {
         </button>
       </div>
 
-      {/* স্পিন কম্পোনেন্ট */}
       <SpinAndEarn 
         userBalance={userBalance} 
         spinFee={5} 
         onSpinSuccess={handleSpinSuccess} 
       />
 
-      {/* বাধ্যতামূলক অ্যাড মডাল */}
       <TaskAdModal 
         isOpen={isAdOpen} 
         onAdComplete={handleAdComplete} 
@@ -213,13 +210,11 @@ export default function TaskAndEarnFeatures() {
       />
     </div>
   );
-            }
-  
-  import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-// ... বাকি UI কম্পোনেন্ট এবং স্টেট
+}
 
+// ==========================================
+// ৫. তানস্ট্যাক রাউট পেজ এক্সপোর্ট (Route Export)
+// ==========================================
 export const Route = createFileRoute('/')({
   ssr: false,
   head: () => ({
@@ -228,5 +223,7 @@ export const Route = createFileRoute('/')({
       { name: 'description', content: 'সহজ টাস্ক সম্পন্ন করে প্রতিদিন আয় করুন।' },
     ],
   }),
-  component: AuthPage,
+  component: TaskAndEarnFeatures,
 });
+
+export default TaskAndEarnFeatures;
