@@ -97,7 +97,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc, collection, getDocs, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-  const firebaseConfig = { apiKey: "AIzaSyAa40UooxODved8rnFD_QV3WN0K_JdDxQw", authDomain: "task-earn-pro-dfc9f.firebaseapp.com", projectId: "task-earn-pro-dfc9f", storageBucket: "task-earn-pro-dfc9f.firebasestorage.app", messagingSenderId: "420826364988", appId: "1:420826364988:web:1bc8db084d4e89a38e5739" };
+    const firebaseConfig = { apiKey: "AIzaSyAa40UooxODved8rnFD_QV3WNOK_J6DxOw", authDomain: "task-earn-pro-dfc9f.firebaseapp.com", projectId: "task-earn-pro-dfc9f", storageBucket: "task-earn-pro-dfc9f.firebasestorage.app", messagingSenderId: "420826364988", appId: "1:420826364988:web:1bc8db084d4e89a38e5739", measurementId: "G-TYWQBTG1QH" };
 const app=initializeApp(firebaseConfig); const auth=getAuth(app); const db=getFirestore(app);
 let currentTaskType='task1';
 window.handleRegister=async()=>{ try{ const c=await createUserWithEmailAndPassword(auth,email.value,password.value); await setDoc(doc(db,"users",c.user.uid),{email:email.value,balance:0,referralIncome:0,inviteCode:c.user.uid.slice(0,6).toUpperCase(),referBy:new URLSearchParams(location.search).get('ref')||""}); }catch(e){authMsg.innerText=e.message} }
