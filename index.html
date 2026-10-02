@@ -3,60 +3,115 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Task Earn Pro - টাস্ক করে আয় করুন</title>
+<title>Task Earn Pro - ROLEX 2.0</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+<style>body{font-family:'Hind Siliguri',sans-serif;background:#e8f5e9}.ad-box{background:linear-gradient(90deg,#fff8e1,#ffecb3);border:1px dashed #ffb300}</style>
 </head>
-<body class="bg-black text-white font-sans">
-<header class="p-4 flex justify-between items-center border-b border-green-500/30">
-  <h1 class="font-bold text-green-400 text-lg">✓ Task Earn Pro</h1>
-  <a href="admin.html" class="text-xs bg-gray-800 px-3 py-1 rounded-full">Admin</a>
-</header>
-<div class="p-5 max-w-md mx-auto">
-  <h2 class="text-3xl font-black text-center leading-tight">টাস্ক করে আয় করুন সহজেই</h2>
-  <p class="text-green-400 text-center font-bold mt-1">Earn Money by Completing Tasks</p>
-  <p class="text-gray-400 text-center text-sm mt-3">বিশ্বস্ত • দৈনন্দিন বিকাশ/নগদ পেমেন্ট • ১০,০০০+ ইউজার</p>
-  
-  <div class="mt-6 space-y-3">
-    <a href="https://t.me/yourtelegramlink" target="_blank" class="block w-full bg-[#00d084] text-black font-bold py-3.5 rounded-xl text-center">Join Now — এখনই যোগ দিন</a>
-    <a href="https://t.me/yourtelegramlink" target="_blank" class="block w-full bg-[#1a1a1a] border border-gray-700 py-3.5 rounded-xl text-center">Telegram — টেলিগ্রামে যোগ দিন</a>
-    <a href="https://wa.me/8801XXXXXXXXX" target="_blank" class="block w-full bg-[#1a1a1a] border border-gray-700 py-3.5 rounded-xl text-center">WhatsApp — হোয়াটসঅ্যাপে কথা বলুন</a>
-  </div>
+<body class="max-w-[430px] mx-auto min-h-screen bg-[#e8f5e9] pb-24 relative">
+<div class="bg-white text-center p-2 text-[11px] ad-box m-2 rounded-lg">🔥 TOP AD - Adsterra কোড এখানে বসবে</div>
+<div class="bg-[#0a7a4a] text-white p-4 rounded-b-[24px]">
+<div class="flex justify-between items-center"><h1 class="font-bold">🪙 ROLEX 2.0</h1><div class="w-8 h-8 bg-white rounded-full"></div></div>
+<div class="flex justify-between mt-4 text-sm"><div><p class="text-[10px] opacity-80">REFERRAL INCOME</p><p id="refIncome" class="font-bold">৳0.00</p></div><div class="text-right"><p class="text-[10px] opacity-80">ACCOUNT ID</p><p id="accId" class="font-bold">#----</p></div></div>
+</div>
 
-  <h3 class="font-bold mt-8 mb-3 text-lg">🔥 আজকের টাস্ক</h3>
-  <div id="tasks" class="space-y-3">Loading tasks...</div>
+<div id="authBox" class="p-4">
+<div class="bg-white rounded-2xl p-5 shadow"><h2 class="font-bold text-center text-xl">লগইন / রেজিস্ট্রেশন</h2>
+<input id="email" placeholder="ইমেইল" class="w-full border p-3 mt-4 rounded-xl">
+<input id="password" type="password" placeholder="পাসওয়ার্ড" class="w-full border p-3 mt-3 rounded-xl">
+<button onclick="handleRegister()" class="w-full bg-[#0a7a4a] text-white py-3 rounded-xl mt-4 font-bold">রেজিস্ট্রেশন</button>
+<button onclick="handleLogin()" class="w-full bg-black text-white py-3 rounded-xl mt-2 font-bold">লগইন</button>
+<p id="authMsg" class="text-xs text-red-500 text-center mt-2"></p></div>
+</div>
 
-  <div class="mt-8 p-4 bg-[#1a1a1a] rounded-xl text-center">
-    <p class="text-xs text-gray-400">পেমেন্ট মাধ্যম</p>
-    <p class="mt-2 font-bold">bKash • Nagad • Rocket • Bank</p>
-  </div>
+<div id="app" class="hidden">
+<div class="grid grid-cols-2 gap-3 p-3">
+<div class="bg-white p-4 rounded-[20px] flex gap-3 shadow-sm"><span class="bg-green-100 p-2 rounded-full h-9">➕</span><div><p class="text-[10px] text-gray-500">ADD FUND</p><p class="font-bold">Deposit</p></div></div>
+<div class="bg-white p-4 rounded-[20px] flex gap-3 shadow-sm border border-red-100"><span class="bg-red-100 p-2 rounded-full h-9">⬇️</span><div><p class="text-[10px] text-gray-500">CASH OUT</p><p class="font-bold text-red-600">Withdraw</p></div></div>
+<div class="bg-white p-4 rounded-[20px] flex gap-3 shadow-sm"><span class="bg-yellow-100 p-2 rounded-full h-9">⏳</span><div><p class="text-[10px] text-gray-500">PENDING</p><p id="pendingBal" class="font-bold">৳0.00</p></div></div>
+<div class="bg-white p-4 rounded-[20px] flex gap-3 shadow-sm"><span class="bg-green-100 p-2 rounded-full h-9">💲</span><div><p class="text-[10px] text-gray-500">APPROVED</p><p id="mainBal" class="font-bold">৳0.00</p></div></div>
+</div>
+<div class="bg-white mx-3 p-3 rounded-xl text-xs flex gap-2 shadow-sm"><span>📢</span><marquee>ক্লেম করে Rolex 2.0-এর সকল সুবিধা উপভোগ করুন</marquee></div>
+<div class="bg-white text-center p-3 text-[11px] ad-box m-3 rounded-lg">📢 MIDDLE AD - 300x250 Ad এখানে</div>
+
+<div id="page-home" class="page">
+<h3 class="font-bold text-[#0a7a4a] px-4 mt-2">SERVICES & FEATURES</h3>
+<div class="grid grid-cols-4 gap-3 p-3">
+<div onclick="switchTab('tasks')" class="bg-white p-3 rounded-2xl text-center shadow-sm"><div class="bg-[#0a7a4a] text-white w-10 h-10 mx-auto rounded-xl flex items-center justify-center">☰</div><p class="text-[11px] mt-2 font-bold">Mission</p></div>
+<div class="bg-white p-3 rounded-2xl text-center shadow-sm"><div class="bg-green-100 w-10 h-10 mx-auto rounded-xl flex items-center justify-center">👑</div><p class="text-[11px] mt-2">VIP Plan</p></div>
+<div class="bg-white p-3 rounded-2xl text-center shadow-sm"><div class="bg-green-100 w-10 h-10 mx-auto rounded-xl flex items-center justify-center">💳</div><p class="text-[11px] mt-2">Membership</p></div>
+<div onclick="switchTab('refer')" class="bg-white p-3 rounded-2xl text-center shadow-sm"><div class="bg-green-100 w-10 h-10 mx-auto rounded-xl flex items-center justify-center">👥</div><p class="text-[11px] mt-2">My Team</p></div>
+</div>
+<div class="bg-white mx-3 p-4 rounded-2xl shadow-sm mt-2"><h4 class="font-bold">💎 VIP Plan কিনে ইনকাম</h4><div id="plans" class="mt-3 space-y-2"></div></div>
+</div>
+
+<div id="page-tasks" class="page hidden p-3">
+<div class="flex gap-2 mb-3 overflow-auto">
+<button onclick="setTaskType('task1')" class="taskTab bg-[#0a7a4a] text-white px-4 py-2 rounded-full text-xs">Task1-ID বিক্রি</button>
+<button onclick="setTaskType('task2')" class="taskTab bg-white px-4 py-2 rounded-full text-xs">Task2-ভিজিট</button>
+<button onclick="setTaskType('task3')" class="taskTab bg-white px-4 py-2 rounded-full text-xs">Task3-কয়েন</button>
+<button onclick="setTaskType('task4')" class="taskTab bg-white px-4 py-2 rounded-full text-xs">Task4-SMS</button>
+</div>
+<div id="taskList" class="space-y-3"></div>
+</div>
+
+<div id="page-refer" class="page hidden p-3">
+<div class="bg-white p-5 rounded-2xl shadow-sm text-center"><h3 class="font-bold">Invite Friends & Earn</h3>
+<div class="bg-[#e8f5e9] p-3 rounded-xl mt-4"><p class="text-xs">Your Invite Code</p><p id="inviteCode" class="font-bold text-lg">------</p></div>
+<p class="text-xs mt-3 break-all">Link: <span id="inviteLink" class="text-blue-600"></span></p>
+<button onclick="copyRefer()" class="w-full bg-[#0a7a4a] text-white py-3 rounded-xl mt-4 font-bold">কপি করুন</button></div>
+</div>
+
+<div id="page-help" class="page hidden p-3">
+<div class="bg-white p-5 rounded-2xl shadow-sm"><h3 class="font-bold">Help & Support</h3>
+<a href="https://t.me/" target="_blank" class="block w-full bg-[#229ED9] text-white text-center py-3 rounded-xl mt-4 font-bold">Telegram</a>
+<a href="https://wa.me/8801XXXXXXXXX" target="_blank" class="block w-full bg-[#25D366] text-white text-center py-3 rounded-xl mt-3 font-bold">WhatsApp</a></div>
+</div>
+
+<div id="page-profile" class="page hidden p-3">
+<div class="bg-white p-5 rounded-2xl shadow-sm"><h3 class="font-bold">Profile</h3>
+<p class="text-sm mt-2">Email: <span id="pEmail"></span></p><p class="text-sm">Balance: <span id="pBal" class="font-bold">৳0</span></p>
+<button onclick="requestWithdraw()" class="w-full bg-red-500 text-white py-3 rounded-xl mt-4 font-bold">Withdraw</button>
+<button onclick="handleLogout()" class="w-full bg-black text-white py-3 rounded-xl mt-3">Logout</button></div>
+</div>
+</div>
+
+<div id="bottomNav" class="hidden fixed bottom-0 left-0 right-0 max-w-[430px] mx-auto bg-white border-t flex justify-around py-3 rounded-t-2xl">
+<button onclick="switchTab('home')" class="flex flex-col items-center text-[#0a7a4a] text-xs">🏠 Home</button>
+<button onclick="switchTab('tasks')" class="flex flex-col items-center text-gray-400 text-xs">📋 Tasks</button>
+<button class="bg-[#0a7a4a] w-12 h-12 rounded-full flex items-center justify-center text-white -mt-5">⊞</button>
+<button onclick="switchTab('refer')" class="flex flex-col items-center text-gray-400 text-xs">👥 Refer</button>
+<button onclick="switchTab('profile')" class="flex flex-col items-center text-gray-400 text-xs">👤 Profile</button>
+</div>
+
+<div id="adModal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+<div class="bg-white rounded-2xl p-5 w-full max-w-sm text-center">
+<p class="font-bold">বিজ্ঞাপন - 10 সেকেন্ড</p>
+<div class="bg-yellow-100 p-4 rounded-xl mt-3 h-32 flex items-center justify-center text-xs">TASK AD - এখানে Ad চলবে</div>
+<p id="adTimer" class="text-3xl font-black mt-3">10</p>
+<button id="adSkipBtn" disabled class="w-full bg-gray-300 text-white py-3 rounded-xl mt-3 font-bold">অপেক্ষা...</button>
+</div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-const firebaseConfig = {
-  apiKey: "AIzaSyADgDf6LWDoZfbB52RhMY05IghrnM9PVic",
-  authDomain: "task-earn-pro-ffcfd.firebaseapp.com",
-  databaseURL: "https://task-earn-pro-ffcfd-default-rtdb.firebaseio.com",
-  projectId: "task-earn-pro-ffcfd",
-  storageBucket: "task-earn-pro-ffcfd.firebasestorage.app",
-  messagingSenderId: "637717717976",
-  appId: "1:637717717976:web:121119866d12c0517908ad",
-  measurementId: "G-42GP9SL128"
-};
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-async function loadTasks(){
-  const snap = await getDocs(collection(db, "tasks"));
-  let html = "";
-  if(snap.empty){ html = "<p class='text-gray-500 text-sm'>এখনো কোনো টাস্ক যোগ করা হয়নি। Admin Panel থেকে যোগ করুন।</p>"; }
-  snap.forEach(d=>{
-    const t = d.data();
-    html+= `<div class='bg-[#1a1a1a] p-4 rounded-xl flex justify-between items-center border border-gray-800'><div><p class='font-bold'>${t.title}</p><p class='text-green-400 text-sm'>৳${t.reward}</p></div><button class='bg-white text-black px-4 py-1.5 rounded-full text-sm font-bold'>করুন</button></div>`;
-  });
-  document.getElementById("tasks").innerHTML = html;
-}
-loadTasks();
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, collection, getDocs, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+const firebaseConfig = { apiKey: "AIzaSyADgDf6LWDoZfbB52RhMY05IghrnM9PVic", authDomain: "task-earn-pro-ffcfd.firebaseapp.com", databaseURL: "https://task-earn-pro-ffcfd-default-rtdb.firebaseio.com", projectId: "task-earn-pro-ffcfd", storageBucket: "task-earn-pro-ffcfd.firebasestorage.app", messagingSenderId: "637717717976", appId: "1:637717717976:web:121119866d12c0517908ad", measurementId: "G-42GP9SL128" };
+const app=initializeApp(firebaseConfig); const auth=getAuth(app); const db=getFirestore(app);
+let currentTaskType='task1';
+window.handleRegister=async()=>{ try{ const c=await createUserWithEmailAndPassword(auth,email.value,password.value); await setDoc(doc(db,"users",c.user.uid),{email:email.value,balance:0,referralIncome:0,inviteCode:c.user.uid.slice(0,6).toUpperCase(),referBy:new URLSearchParams(location.search).get('ref')||""}); }catch(e){authMsg.innerText=e.message} }
+window.handleLogin=async()=>{ try{ await signInWithEmailAndPassword(auth,email.value,password.value);}catch(e){authMsg.innerText=e.message} }
+window.handleLogout=()=>signOut(auth);
+onAuthStateChanged(auth, async(u)=>{ if(u){ authBox.classList.add("hidden"); app.classList.remove("hidden"); bottomNav.classList.remove("hidden"); const s=await getDoc(doc(db,"users",u.uid)); if(s.exists()){ const d=s.data(); mainBal.innerText="৳"+(d.balance||0); refIncome.innerText="৳"+(d.referralIncome||0); accId.innerText="#"+u.uid.slice(0,7); inviteCode.innerText=d.inviteCode; pEmail.innerText=u.email; pBal.innerText="৳"+(d.balance||0); inviteLink.innerText=location.origin+location.pathname+"?ref="+d.inviteCode; } loadPlans(); loadTasks(); }else{ authBox.classList.remove("hidden"); app.classList.add("hidden"); bottomNav.classList.add("hidden"); } });
+window.switchTab=(t)=>{ document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden')); document.getElementById('page-'+t).classList.remove('hidden'); if(t=='tasks') loadTasks(); }
+window.setTaskType=(type)=>{ currentTaskType=type; loadTasks(); }
+async function loadPlans(){ const snap=await getDocs(collection(db,"plans")); let h=""; if(snap.empty) h="<p class='text-xs text-gray-400'>Admin থেকে Plan যোগ করুন</p>"; snap.forEach(d=>{ const p=d.data(); h+=`<div class='border p-3 rounded-xl flex justify-between'><div><p class='font-bold'>${p.name}</p><p class='text-xs'>${p.income}/দিন</p></div><button onclick="buyPlan(${p.price})" class='bg-black text-white px-4 py-2 rounded-full text-xs'>৳${p.price}</button></div>`; }); plans.innerHTML=h; }
+async function loadTasks(){ const snap=await getDocs(collection(db,currentTaskType)); let h=""; if(snap.empty) h="<div class='bg-white p-4 rounded-xl text-center text-xs'>কোনো টাস্ক নেই - Admin থেকে যোগ করুন</div>"; snap.forEach(d=>{ const t=d.data(); h+=`<div class='bg-white p-4 rounded-2xl shadow-sm flex justify-between'><div><p class='font-bold text-sm'>${t.title}</p><p class='text-[#0a7a4a] font-bold'>৳${t.reward||10}</p></div><button onclick="startTask(${t.reward||10})" class='bg-[#0a7a4a] text-white px-5 h-9 rounded-full text-xs font-bold'>করুন</button></div>`; }); taskList.innerHTML=h; }
+window.startTask=(reward)=>{ adModal.classList.remove("hidden"); let sec=10; adTimer.innerText=sec; adSkipBtn.disabled=true; const iv=setInterval(()=>{ sec--; adTimer.innerText=sec; if(sec<=0){ clearInterval(iv); adSkipBtn.disabled=false; adSkipBtn.innerText="Complete - ৳"+reward; adSkipBtn.className="w-full bg-[#0a7a4a] text-white py-3 rounded-xl mt-3 font-bold"; adSkipBtn.onclick=async()=>{ adModal.classList.add("hidden"); const u=auth.currentUser; await updateDoc(doc(db,"users",u.uid),{balance:increment(reward)}); alert("৳"+reward+" যোগ হয়েছে"); location.reload(); } } },1000); }
+window.buyPlan=async(price)=>{ const u=auth.currentUser; const s=await getDoc(doc(db,"users",u.uid)); if((s.data().balance||0)<price) return alert("ব্যালেন্স কম"); await updateDoc(doc(db,"users",u.uid),{balance:increment(-price)}); alert("Plan কেনা সফল"); }
+window.copyRefer=()=>{ navigator.clipboard.writeText(inviteLink.innerText); alert("কপি হয়েছে"); }
+window.requestWithdraw=()=>{ const a=prompt("কত টাকা?"); if(a) alert("Withdraw Request পাঠানো হয়েছে"); }
 </script>
 </body>
   </html>
